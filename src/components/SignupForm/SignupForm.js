@@ -40,9 +40,9 @@ class SignupForm extends React.Component {
       merge_fields: {},
     })
       .then(({ data }) => {
-        alert(`subscribed email: ${data.email_address} \n Please check your email! :)`)
+        alert(`subscribed email: ${data.email_address} \n Please check your email! :)`) // eslint-disable-line no-alert
       })
-      .catch(err => alert(`there was an error: ${err.message}`))
+      .catch(err => alert(`there was an error: ${err.message}`)) // eslint-disable-line no-alert
   }
 }
 
