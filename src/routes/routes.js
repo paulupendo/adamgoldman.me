@@ -52,6 +52,10 @@ const routes = {
     },
     // Wildcard routes, e.g. { path: '(.*)', ... } (must go last)
     {
+      path: '/typeform',
+      load: () => import(/* webpackChunkName: 'typeForm' */ './typeForm'),
+    },
+    {
       path: '(.*)',
       load: () => import(/* webpackChunkName: 'not-found' */ './not-found'),
     },
