@@ -7,8 +7,11 @@ import FA from 'react-fontawesome'
 import Testimony from '../../components/Testimony'
 import { MESSENGER_LINK } from '../../constants'
 
+import EmbededTypeForm from '../../components/Typeform'
+
 import FAQ from './FAQ'
 import s from './SavoringYourChild.css'
+
 
 const SavoringYourChild = () => (
   <div>
@@ -17,7 +20,9 @@ const SavoringYourChild = () => (
         <h1 className="sitetitle text-center">How to honor your child&apos;s memory after the transition</h1>
         <p className="lead text-center">And appreciate the relationship you had in a resourceful way</p>
       </div>
-      <div id="typeform">Typeform goes here ...</div>
+      <div id="typeform">
+        <EmbededTypeForm />
+      </div>
       <hr className={s.hr} />
       <h1 className="text-center">Parents share ...</h1>
       <Testimony
