@@ -8,6 +8,10 @@ const Ssr = Component => class SsrComponent extends React.Component {
     // eslint-disable-next-line react/no-did-mount-set-state
     this.setState({ isMounted: true })
   }
+  componentWillUnmount() {
+    // eslint-disable-next-line react/no-did-mount-set-state
+    this.setState({ isMounted: false })
+  }
   render() {
     if (!this.state.isMounted) {
       return null
