@@ -1,24 +1,22 @@
 import React from 'react'
-import { ReactTypeformEmbed } from 'react-typeform-embed'
 
 class Typeform extends React.Component {
-  state = {
-    isMounted: false,
-  }
   componentDidMount() {
-    // eslint-disable-next-line react/no-did-mount-set-state
-    this.setState({ isMounted: true })
+    /* eslint-disable */
+    let qs, js, q, s, d = document, gi = d.getElementById, ce = d.createElement, gt = d.getElementsByTagName, id = 'typef_orm', b = 'https://embed.typeform.com/';
+    if (!gi.call(d, id)) { js = ce.call(d, 'script'); js.id = id; js.src = `${b}embed.js`; q = gt.call(d, 'script')[0]; q.parentNode.insertBefore(js, q) }
+    /* eslint-enable */
   }
-  componentWillUnmount() {
-    // eslint-disable-next-line react/no-did-mount-set-state
-    this.setState({ isMounted: false })
-  }
+
   render() {
-    if (!this.state.isMounted) {
-      return null
-    }
-    return <ReactTypeformEmbed {...this.props} />
+    return (
+      <div
+        className="typeform-widget"
+        {...this.props}
+      />
+    )
   }
 }
+
 
 export default Typeform

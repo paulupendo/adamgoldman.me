@@ -20,7 +20,10 @@ const SavoringYourChild = () => (
         <p className="lead text-center">And appreciate the relationship you had in a resourceful way</p>
       </div>
       <div id="typeform">
-        <Typeform url="https://demo.typeform.com/to/FS5ylM" />
+        <Typeform
+          data-url="https://adamgoldman.typeform.com/to/Rwa8iu"
+          style={{ width: '100%', height: 500 }}
+        />
       </div>
       <hr className={s.hr} />
       <h1 className="text-center">Parents share ...</h1>
