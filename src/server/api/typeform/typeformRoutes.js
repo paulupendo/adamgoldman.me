@@ -3,9 +3,9 @@ import controller from './typeformController'
 const router = require('express').Router()
 
 router.route('/:name')
-  .get(controller.getDummy)
+  .get(controller.getByName)
 
-router.route('/')
-  .post(controller.postDummy)
+router.route('/token/:token')
+  .get(controller.getByToken)
 
 export default router
