@@ -24,7 +24,7 @@
   opacity: 0;
 }
 
-.answerActions > span{
+.answerActions > * {
   cursor: pointer;
 }
 

@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react'
-import FA from 'react-fontawesome'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import faFacebookF from '@fortawesome/fontawesome-free-brands/faFacebookF'
 import axios from 'axios'
 
 type Props = {
@@ -20,7 +21,7 @@ class FbLogin extends React.Component {
     }
     return (
       <div onClick={this.login} style={{ cursor: 'pointer' }}>
-        <FA name="facebook" /> Login
+        <FontAwesomeIcon icon={faFacebookF} /> Login
       </div>
     )
   }

@@ -3,10 +3,17 @@ import PropTypes from 'prop-types'
 import withStyles from 'isomorphic-style-loader/lib/withStyles'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import axios from 'axios'
-import FA from 'react-fontawesome'
 import cx from 'classnames'
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import faKeyboard from '@fortawesome/fontawesome-free-solid/faKeyboard'
+import faKeyboard from '@fortawesome/fontawesome-free-regular/faKeyboard'
+import faPaperPlane from '@fortawesome/fontawesome-free-regular/faPaperPlane'
+import faTrashAlt from '@fortawesome/fontawesome-free-regular/faTrashAlt'
+import faSave from '@fortawesome/fontawesome-free-regular/faSave'
+import faEraser from '@fortawesome/fontawesome-free-solid/faEraser'
+import faLink from '@fortawesome/fontawesome-free-solid/faLink'
+import faCog from '@fortawesome/fontawesome-free-solid/faCog'
+import faExternalLinkAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkAlt'
+import faEye from '@fortawesome/fontawesome-free-solid/faEye'
 
 import { inputChange, inputToggle } from '../../forms'
 import { reorder, scrollToElem } from '../../utils'
@@ -49,12 +56,13 @@ class TutorialGenerator extends React.Component {
         <div className="clearfix" style={{ width: '60%', float: 'left' }}>
           {this.renderDetails()}
           <hr />
+          <h1 id="steps" className="text-center">Steps</h1>
           {this.renderSteps()}
           <a onClick={this.addStep}>+ Step</a>
           <div className={s.controls}>
-            <a className={s.control} href={`/tools/${this.props.url}`} target="_blank"><FA name="eye" /></a>
-            <a className={s.control} onClick={this.save}><FA name="save" /></a>
-            <a className={s.control} onClick={this.del}><FA name="trash" /></a>
+            <a className={s.control} href={`/tools/${this.props.url}`} target="_blank"><FontAwesomeIcon icon={faEye} /></a>
+            <a className={s.control} onClick={this.save}><FontAwesomeIcon icon={faSave} /></a>
+            <a className={s.control} onClick={this.del}><FontAwesomeIcon icon={faTrashAlt} /></a>
           </div>
         </div>
         <div className="clearfix" style={{ width: '35%', right: 0, position: 'fixed' }}>
@@ -70,7 +78,7 @@ class TutorialGenerator extends React.Component {
     } = this.state
     return (
       <div>
-        <h2 id="details">Details</h2>
+        <h1 id="details" className="text-center">Details</h1>
         <div className="form-group">
           Title
           <input className="form-control" placeholder="Title" value={title} onChange={inputChange.call(this, 'title')} />
@@ -146,7 +154,7 @@ class TutorialGenerator extends React.Component {
             <textarea style={{ minHeight: 200, width: '100%', border: 0 }} id={`step-${sIdx}-description`} required className="form-control" placeholder="Step description" value={step.description} onChange={this.changeStepKey('description', sIdx)} />
           </div>
           <div className="col-2">
-            <p className="text-right">{sIdx}/{this.state.steps.length - 1} <a onClick={this.removeStep(sIdx)}><FA name="trash-o" /></a></p>
+            <p className="text-right">{sIdx}/{this.state.steps.length - 1} <a onClick={this.removeStep(sIdx)}><FontAwesomeIcon name="trash-o" /></a></p>
             <select
               className="select"
               style={{ marginRight: 5 }}
@@ -202,11 +210,15 @@ class TutorialGenerator extends React.Component {
                 />
               </div>
               <div className={cx('col-2 text-right', s.answerActions)}>
-                <FA onClick={this.toggleAnswerSettings(sIdx, aIdx)} name="cog" className={cx(s.answerSettingsToggle, { [s.isActive]: a.showSettings })} />
-                <FA onClick={this.removeAnswer(sIdx, aIdx)} name="trash-o" />
+                <FontAwesomeIcon
+                  onClick={this.toggleAnswerSettings(sIdx, aIdx)}
+                  icon={faCog}
+                  className={cx(s.answerSettingsToggle, { [s.isActive]: a.showSettings })}
+                />
+                <FontAwesomeIcon onClick={this.removeAnswer(sIdx, aIdx)} icon={faTrashAlt} />
               </div>
             </div>
-            {a.showSettings && [{ id: 'hasGoToStep', icon: 'paper-plane' }, { id: 'isSetInput', icon: faKeyboard }, { id: 'hasResetInputs', icon: 'eraser' }, { id: 'isLink', icon: 'Link' }, { id: 'link', icon: 'external-link' }]
+            {a.showSettings && [{ id: 'hasGoToStep', icon: faPaperPlane }, { id: 'isSetInput', icon: faKeyboard }, { id: 'hasResetInputs', icon: faEraser }, { id: 'isLink', icon: faLink }, { id: 'link', icon: faExternalLinkAlt }]
               .map(({ id, icon }) => (
                 <div className="form-check form-check-inline">
                   <label htmlFor={`step-${sIdx}-answer-${aIdx}-${id}`} className="form-check-label">
