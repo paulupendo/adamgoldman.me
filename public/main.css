@@ -540,3 +540,10 @@ blockquote.rtl {
 .italic {
   font-style: italic;
 }
+.tool-answer {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.tool-answer > * {
+  width: 100%;
+}

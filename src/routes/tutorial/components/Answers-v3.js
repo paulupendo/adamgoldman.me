@@ -4,24 +4,19 @@ import React from 'react'
 
 import Link from '../../../components/Link'
 import FbShareLink from '../../../components/FbShareLink'
-import he from '../../../he'
-
-import Answer from './Answer'
 
 type Props = {
   style: Object,
   answers?: Array<any>,
   onNext: Function,
-  gender?: string,
   onGoToStepByTitle: Function,
   noBack: boolean,
-  isRtl: boolean,
   onResetInputs: Function,
   onSetInput: Function,
 };
 
 const AnswersV3 = ({
-  style, answers, onNext, onGoToStepByTitle, noBack, isRtl, gender, onResetInputs, onSetInput,
+  style, answers, onNext, onGoToStepByTitle, noBack, onResetInputs, onSetInput,
 }:
 Props) => (
   <div style={style}>
@@ -32,10 +27,11 @@ Props) => (
       } else if (answer.link) {
         html = <Link to={answer.link}>{answer.text}</Link>
       } else if (answer.alert) {
-        html = <a onClick={() => global.alert(answer.alert)}>{answer.text}</a>
+        html = <button className="btn btn-primary" onClick={() => global.alert(answer.alert)}>{answer.text}</button>
       } else if (answer.linkNew) {
         html = (
           <a
+            className="btn btn-primary"
             href={answer.linkNew}
             target="_blank"
             rel="nofollow noreferrer noopener"
@@ -44,7 +40,9 @@ Props) => (
         )
       } else {
         html = (
-          <a onClick={() => {
+          <button
+            className="btn btn-primary"
+            onClick={() => {
             if (answer.resetInputs) {
               onResetInputs(answer.resetInputs.split(', '))
             }
@@ -58,50 +56,34 @@ Props) => (
             }
           }}
           >{answer.text}
-          </a>
+          </button>
         )
       }
 
       return (
-        <Answer isRtl={isRtl} key={idx}>
+        <div key={idx} className="tool-answer">
           {html}
-        </Answer>
+        </div>
       )
     })}
-
-    {renderBack({ noBack, isRtl, onNext })}
-    {renderDontUnderstand({ isRtl, gender })}
+    <hr />
+    {renderBack({ noBack, onNext })}
   </div>
 )
 
 AnswersV3.defaultProps = {
   answers: [],
-  gender: 'male',
 }
 
 // eslint-disable-next-line react/prop-types
-function renderBack({ noBack, isRtl, onNext }) {
+function renderBack({ noBack, onNext }) {
   if (noBack) {
     return null
   }
   return (
-    <Answer isRtl={isRtl}>
-      <a onClick={() => onNext(-1)}>{!isRtl ? 'Back' : 'אחורה'}</a>
-    </Answer>
-  )
-}
-
-// eslint-disable-next-line react/prop-types
-function renderDontUnderstand({ isRtl, gender }) {
-  return (
-    <Answer isRtl={isRtl}>
-      <a
-        onClick={() =>
-          global.alert(!isRtl ? "follow the steps as best you can now, and contact me when you're done" : `${he.taakov(gender)} אחר הצעדים הכי טוב ש${he.ata(gender)} ${he.yajol(gender)} עכשיו, ו${he.tsor(gender)} איתי קשר כש${he.ata(gender)} ${he.mesayem(gender)}`)}
-      >
-        {!isRtl ? 'I don\'t understand' : `אני לא ${he.mevin(gender)}`}
-      </a>
-    </Answer>
+    <div className="tool-answer">
+      <button className="btn btn-secondary" onClick={() => onNext(-1)}>Back</button>
+    </div>
   )
 }
 

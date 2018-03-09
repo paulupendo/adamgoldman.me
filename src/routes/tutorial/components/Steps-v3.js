@@ -2,30 +2,18 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import Markdown from '../../../components/Markdown'
-import Testimony from '../../../components/Testimony'
-import SignupFormToolFollowup from '../../../components/SignupFormToolFollowup'
-import { scrollToElem } from '../../../utils'
+import { scrollToElem, isMobile } from '../../../utils'
 
 import AnswersV3 from './Answers-v3'
 
 class StepsV3 extends React.Component {
   static propTypes = {
     initialState: PropTypes.object,
-    testimony1Text: PropTypes.string,
-    testimony1Src: PropTypes.string,
-    testimony1Name: PropTypes.string,
-    testimony1NameMeta: PropTypes.string,
     steps: PropTypes.array.isRequired,
-    isRtl: PropTypes.boolean,
   }
 
   static defaultProps = {
     initialState: {},
-    isRtl: false,
-    testimony1Text: '',
-    testimony1Src: '',
-    testimony1Name: '',
-    testimony1NameMeta: '',
   }
 
   state = {
@@ -34,19 +22,11 @@ class StepsV3 extends React.Component {
   }
 
   render() {
-    const { steps, isRtl } = this.props
-    const { currentStep } = this.state
-
     return (
       <div>
-        <h6 style={{ marginBottom: 0, position: 'relative', top: -30 }} className={!isRtl ? '' : 'rtl'}>
-          {!isRtl ? 'Step' : 'צעד'} {currentStep}/{steps.length - 1}
-        </h6>
         {this.renderTitle()}
-        {this.renderTestimonials()}
         {this.renderDescription()}
         {this.renderInput()}
-        {this.renderSignup()}
         {this.renderAnswers()}
       </div>
     )
@@ -57,28 +37,7 @@ class StepsV3 extends React.Component {
     if (!step.title) { return null }
     return (
       <Markdown
-        className={!this.props.isRtl ? '' : 'rtl'}
         source={`## ${replaceVars(step.title, this.state)}`}
-      />
-    )
-  }
-
-  renderTestimonials() {
-    const {
-      testimony1Text, testimony1Src, testimony1Name, testimony1NameMeta,
-    } = this.props
-    if (this.state.currentStep !== 0) {
-      return null
-    }
-    if (!testimony1Text) {
-      return null
-    }
-    return (
-      <Testimony
-        imgSrc={testimony1Src}
-        text={testimony1Text}
-        name={testimony1Name}
-        nameMeta={testimony1NameMeta}
       />
     )
   }
@@ -87,7 +46,6 @@ class StepsV3 extends React.Component {
     const step = this.props.steps[this.state.currentStep]
     return (
       <Markdown
-        className={!this.props.isRtl ? '' : 'rtl'}
         source={replaceVars(step.description, this.state)}
       />
     )
@@ -106,27 +64,18 @@ class StepsV3 extends React.Component {
       >
         <div className="form-group">
           <input
+            autoFocus={!isMobile()}
             value={this.state[`${inputId}`]}
             onChange={this.inputsChange(inputId)}
             placeholder={replaceVars(inputPlaceholder, this.state)}
             required
-            className={`form-control ${!this.props.isRtl ? '' : 'rtl'}`}
+            className="form-control"
             aria-describedby="inputHelp"
           />
           <small id="inputHelp" className="form-text text-muted">I will never share your data with anyone else.</small>
         </div>
-        <button type="submit" className="btn btn-primary">{!this.props.isRtl ? 'Let\'s continue' : 'בוא נמשיך'}</button>
+        <button type="submit" className="btn btn-primary btn-block">Lets continue</button>
       </form>
-    )
-  }
-
-  renderSignup() {
-    const { listId } = this.props.steps[this.state.currentStep]
-    if (!listId) {
-      return null
-    }
-    return (
-      <SignupFormToolFollowup listId={listId} onNext={this.next} />
     )
   }
 
@@ -141,7 +90,6 @@ class StepsV3 extends React.Component {
       <AnswersV3
         style={{ marginTop: 20, marginBottom: 20 }}
         gender={this.state.gender}
-        isRtl={this.props.isRtl}
         answers={answers}
         onGoToStepByTitle={this.goToStepByTitle}
         onResetInputs={this.resetInputs}
