@@ -3,9 +3,10 @@ import PropTypes from 'prop-types'
 import withStyles from 'isomorphic-style-loader/lib/withStyles'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import axios from 'axios'
+import FA from 'react-fontawesome'
 
 import { inputChange, inputToggle } from '../../forms'
-import { reorder } from '../../utils'
+import { reorder, scrollToElem } from '../../utils'
 
 import s from './TutorialGenerator.css'
 
@@ -17,16 +18,11 @@ class TutorialGenerator extends React.Component {
 
   state = {
     initialState: {},
-    testimony1Text: '',
-    testimony1Name: '',
-    testimony1NameMeta: '',
-    testimony1Src: '',
     isDraft: false,
     title: '',
     description: '',
     nick: '',
     credits: '',
-    isRtl: false,
     steps: [],
   }
 
@@ -38,31 +34,18 @@ class TutorialGenerator extends React.Component {
 
   render() {
     return (
-      <div className="container">
-        <div className="mainheading">
-          <h1 className="posttitle">Tutorial Generator</h1>
+      <div>
+        <div className="clearfix" style={{ width: '60%', float: 'left' }}>
+          {this.renderDetails()}
+          <hr />
+          {this.renderSteps()}
+          <a onClick={this.addStep}>+ Step</a>
+          <div className={s.controls}>
+            <a className={s.control} onClick={this.save}>Save</a>
+          </div>
         </div>
-
-        <h2>Details</h2>
-        {this.renderDetails()}
-
-        <hr />
-
-        {this.renderTestimonials()}
-
-        <hr />
-
-        <h2>Steps</h2>
-        {this.renderStepsTOC()}
-
-        <hr />
-
-        {this.renderSteps()}
-
-        <a onClick={this.addStep}>+ Step</a>
-
-        <div className={s.controls}>
-          <a className={s.control} onClick={this.save}>Save</a>
+        <div className="clearfix" style={{ width: '35%', right: 0, position: 'fixed' }}>
+          {this.renderTOC()}
         </div>
       </div>
     )
@@ -70,10 +53,11 @@ class TutorialGenerator extends React.Component {
 
   renderDetails() {
     const {
-      title, nick, description, isRtl, credits, isDraft,
+      title, nick, description, credits, isDraft,
     } = this.state
     return (
       <div>
+        <h2 id="details">Details</h2>
         <div className="form-group">
           Title
           <input className="form-control" placeholder="Title" value={title} onChange={inputChange.call(this, 'title')} />
@@ -91,10 +75,6 @@ class TutorialGenerator extends React.Component {
           <input className="form-control" placeholder="Credits" value={credits} onChange={inputChange.call(this, 'credits')} />
         </div>
         <div className="form-group">
-          <input type="checkbox" id="isRtl" value={isRtl} checked={isRtl} onChange={inputToggle.call(this, 'isRtl')} />
-          <label htmlFor="isRtl">RTL</label>
-        </div>
-        <div className="form-group">
           <input type="checkbox" id="isDraft" value={isDraft} checked={isDraft} onChange={inputToggle.call(this, 'isDraft')} />
           <label htmlFor="isDraft">Draft</label>
         </div>
@@ -102,25 +82,12 @@ class TutorialGenerator extends React.Component {
     )
   }
 
-  renderTestimonials() {
-    return (
-      <div className="form-group">
-        <h3>Testimonies</h3>
-        <div>
-          <input className="form-control" value={this.state.testimony1Text} placeholder="text" onChange={inputChange.call(this, 'testimony1Text')} />
-          <input className="form-control" value={this.state.testimony1Name} placeholder="name" onChange={inputChange.call(this, 'testimony1Name')} />
-          <input className="form-control" value={this.state.testimony1NameMeta} placeholder="name meta" onChange={inputChange.call(this, 'testimony1NameMeta')} />
-          <input className="form-control" value={this.state.testimony1Src} placeholder="image src" onChange={inputChange.call(this, 'testimony1Src')} />
-        </div>
-      </div>
-    )
-  }
-
-  renderStepsTOC() {
+  renderTOC() {
     const stepsCount = this.state.steps.length - 1
     return (
       <div>
         <h2>TOC</h2>
+        <a onClick={() => scrollToElem(document.querySelector('html'), 0, 300)}>Details</a>
         <DragDropContext onDragEnd={this.onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
@@ -141,7 +108,7 @@ class TutorialGenerator extends React.Component {
                           )}
                           {...providedInner.dragHandleProps}
                         >
-                          <a onClick={evt => evt.stopPropagation()} href={`#step-${idx}`}>Step {(idx <= 9 && stepsCount > 9) ? `0${idx}` : idx}/{stepsCount}</a> - {title}
+                          <a onClick={() => scrollToElem(document.querySelector('html'), document.querySelector(`#step-${idx}`).getBoundingClientRect().top - document.body.getBoundingClientRect().top, 300)}>Step {(idx <= 9 && stepsCount > 9) ? `0${idx}` : idx}/{stepsCount}</a> - {title}
                         </div>
                         {providedInner.placeholder}
                       </div>
@@ -161,51 +128,55 @@ class TutorialGenerator extends React.Component {
     return this.state.steps.map((step, sIdx) => (
       <div key={sIdx} id={`step-${sIdx}`}>
         <div className="row">
-          <div className="col"><h2>Step {sIdx}</h2></div>
-          <div className="col">
-            <input type="checkbox" id={`inputStep${sIdx}`} value={step.hasInput} checked={step.hasInput} onChange={this.toggleStepKey('hasInput', sIdx)} />
-            <label className={s.inputLabel} htmlFor={`inputStep${sIdx}`}>Input</label>
+          <div className="col-10">
+            <input style={{ width: '100%', border: 0 }} className="h1" id={`step-${sIdx}-title`} placeholder="Title" value={step.title} onChange={this.changeStepKey('title', sIdx)} />
+            <textarea style={{ minHeight: 200, width: '100%', border: 0 }} id={`step-${sIdx}-description`} required className="form-control" placeholder="Description" value={step.description} onChange={this.changeStepKey('description', sIdx)} />
           </div>
-          <div className="col">
-            <input type="checkbox" id={`signupStep${sIdx}`} value={step.hasSignup} checked={step.hasSignup} onChange={this.toggleStepKey('hasSignup', sIdx)} />
-            <label className={s.inputLabel} htmlFor={`signupStep${sIdx}`}>Signup</label>
-          </div>
-          <div className="col"><a onClick={this.removeStep(sIdx)}>X</a></div>
-        </div>
-        <div className="form-group row">
-          <label htmlFor={`step-${sIdx}-title`} className="col-sm-2 col-form-label">Title</label>
-          <div className="col-sm-10">
-            <input className="form-control" id={`step-${sIdx}-title`} placeholder="Title" value={step.title} onChange={this.changeStepKey('title', sIdx)} />
-          </div>
-        </div>
-        <div className="form-group row">
-          <label htmlFor={`step-${sIdx}-description`} className="col-sm-2 col-form-label">Description</label>
-          <div className="col-sm-10">
-            <textarea style={{ minHeight: 200 }} id={`step-${sIdx}-description`} required className="form-control" placeholder="Description" value={step.description} onChange={this.changeStepKey('description', sIdx)} />
+          <div className="col-2">
+            <p className="text-right">{sIdx}/{this.state.steps.length}</p>
+            <select
+              className="select"
+              style={{ marginRight: 5 }}
+              value={step.type}
+              onChange={this.changeStepKey('type', sIdx)}
+              required
+            >
+              <option value="radio">Radio</option>
+              <option value="checkbox">Checkbox</option>
+              <option value="short">Short</option>
+              <option value="long">Long</option>
+            </select>
+            <a onClick={this.removeStep(sIdx)}><FA name="trash-o" /></a>
           </div>
         </div>
         <div className="form-group">
-          {step.hasInput && (
-          <div>
-            <input className={`form-control ${s.inputHalf}`} value={step.inputId} placeholder="Id" onChange={this.changeStepKey('inputId', sIdx)} />
-            <input className={`form-control ${s.inputHalf}`} value={step.inputPlaceholder} placeholder="Placeholder" onChange={this.changeStepKey('inputPlaceholder', sIdx)} />
-          </div>
+          {step.type === 'short' && (
+            <input className="form-control" value={step.inputPlaceholder} placeholder="Placeholder" onChange={this.changeStepKey('inputPlaceholder', sIdx)} />
+            )}
+          {step.type === 'long' && (
+          <textarea className="form-control" value={step.inputPlaceholder} placeholder="Placeholder" onChange={this.changeStepKey('inputPlaceholder', sIdx)} />
             )}
         </div>
 
-        <div className="form-group">
-          {step.hasSignup && (
-          <div>
-            <input className={`form-control ${s.inputHalf}`} value={step.listId} placeholder="List Id" onChange={this.changeStepKey('listId', sIdx)} />
-          </div>
-            )}
-        </div>
+        {this.renderMultipleAnswers(sIdx)}
 
-        <div className={s.stepHeader}>
-          <h4>Answers</h4>
-          <a onClick={this.addAnswer(sIdx)}>+ answer</a>
-        </div>
+        <hr style={{ borderTopWidth: 10, marginBottom: 40 }} />
+      </div>
+    ),
+    )
+  }
 
+  renderMultipleAnswers(sIdx) {
+    const step = this.state.steps[sIdx]
+    if (!step.type) {
+      return null
+    }
+    if (!step.type.match(/radio|checkbox/)) {
+      return null
+    }
+    return (
+      <div>
+        <a onClick={this.addAnswer(sIdx)}>+ answer</a>
         {step.answers.map((a, aIdx) => (
           <div style={{ marginLeft: 10 }}>
             <div className="form-row">
@@ -216,21 +187,21 @@ class TutorialGenerator extends React.Component {
                 <input id={`step-${sIdx}-answer-${aIdx}`} className="form-control" placeholder={`answer #${aIdx}`} value={a.text} onChange={this.changeAnswerKey('text', sIdx, aIdx)} />
               </div>
               <div className="col-auto">
-                <a onClick={this.removeAnswer(sIdx, aIdx)}>X</a>
+                <a onClick={this.removeAnswer(sIdx, aIdx)}><FA name="trash-o" /></a>
               </div>
             </div>
-            {['hasInput', 'hasGoToStep', 'hasResetInputs', 'isFbShare', 'isLink', 'isLinkNew']
-              .map(aOption => (
+            {[{ id: 'hasGoToStep', text: '--> Step' }, { id: 'isSetInput', text: 'Sets Input' }, { id: 'hasResetInputs', text: 'Resets Input' }, { id: 'isLink', text: 'Link' }, { id: 'isLinkNew', text: 'Link (new window)' }]
+              .map(({ id, text }) => (
                 <div className="form-check form-check-inline">
-                  <label htmlFor={`step-${sIdx}-answer-${aIdx}-${aOption}`} className="form-check-label">
-                    <input type="checkbox" className="form-check-input" id={`step-${sIdx}-answer-${aIdx}-${aOption}`} value={a[aOption]} checked={a[aOption]} onChange={this.toggleAnswerKey(aOption, sIdx, aIdx)} />
-                    {aOption}
+                  <label htmlFor={`step-${sIdx}-answer-${aIdx}-${id}`} className="form-check-label">
+                    <input type="checkbox" className="form-check-input" id={`step-${sIdx}-answer-${aIdx}-${id}`} value={a[id]} checked={a[id]} onChange={this.toggleAnswerKey(id, sIdx, aIdx)} />
+                    {text}
                   </label>
                 </div>
                 ))}
             <div className="form-group">
-              { a.hasInput && <input placeholder="id" value={a.inputId} onChange={this.changeAnswerKey('inputId', sIdx, aIdx)} /> }
-              { a.hasInput && <input placeholder="value" value={a.inputValue} onChange={this.changeAnswerKey('inputValue', sIdx, aIdx)} /> }
+              { a.isSetInput && <input placeholder="id" value={a.inputId} onChange={this.changeAnswerKey('inputId', sIdx, aIdx)} /> }
+              { a.isSetInput && <input placeholder="value" value={a.inputValue} onChange={this.changeAnswerKey('inputValue', sIdx, aIdx)} /> }
             </div>
             <div className="form-group">
               { a.hasGoToStep && <input placeholder="title" value={a.goToStepByTitle} onChange={this.changeAnswerKey('goToStepByTitle', sIdx, aIdx)} /> }
@@ -250,9 +221,7 @@ class TutorialGenerator extends React.Component {
             { step.answers.length - 1 > aIdx && <hr className={s.answersHr} />}
           </div>
           ))}
-        <hr style={{ borderTopWidth: 10, marginBottom: 40 }} />
       </div>
-    ),
     )
   }
 
@@ -284,11 +253,9 @@ class TutorialGenerator extends React.Component {
     nextSteps.push({
       title: '',
       description: '',
-      hasInput: false,
+      type: 'radio',
       inputId: '',
       inputPlaceholder: '',
-      hasSignup: false,
-      listId: '',
       answers: [],
     })
     this.setState({ steps: nextSteps })
@@ -324,7 +291,7 @@ class TutorialGenerator extends React.Component {
       text: '',
       alert: '',
       hasAlert: false,
-      hasInput: false,
+      isSetInput: false,
       inputId: '',
       inputValue: '',
       hasResetInputs: '',
@@ -366,21 +333,11 @@ class TutorialGenerator extends React.Component {
 export default withStyles(s)(TutorialGenerator)
 
 function cleanEmptyValues(state) {
-  if (!state.isRtl) { delete state.isRtl }
   // clear empty values
   state.steps = state.steps.map((step) => {
-    if (!step.hasInput) {
-      delete step.inputId
-      delete step.inputPlaceholder
-    }
-
-    if (!step.hasSignup) {
-      delete step.listId
-    }
-
     step.answers = step.answers.map((a) => {
       if (!a.text) { delete a.text }
-      if (!a.hasInput) { delete a.hasInput }
+      if (!a.isSetInput) { delete a.isSetInput }
       if (!a.inputId) { delete a.inputId }
       if (!a.inputValue) { delete a.inputValue }
       if (!a.hasResetInputs) { delete a.hasResetInputs }
