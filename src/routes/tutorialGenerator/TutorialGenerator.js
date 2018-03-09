@@ -154,7 +154,7 @@ class TutorialGenerator extends React.Component {
             <textarea style={{ minHeight: 200, width: '100%', border: 0 }} id={`step-${sIdx}-description`} required className="form-control" placeholder="Step description" value={step.description} onChange={this.changeStepKey('description', sIdx)} />
           </div>
           <div className="col-2">
-            <p className="text-right">{sIdx}/{this.state.steps.length - 1} <a onClick={this.removeStep(sIdx)}><FontAwesomeIcon name="trash-o" /></a></p>
+            <p className="text-right">{sIdx}/{this.state.steps.length - 1} <a onClick={this.removeStep(sIdx)}><FontAwesomeIcon icon={faTrashAlt} /></a></p>
             <select
               className="select"
               style={{ marginRight: 5 }}
@@ -171,10 +171,10 @@ class TutorialGenerator extends React.Component {
         </div>
         <div className="form-group">
           {step.type === 'short' && (
-            <input className="form-control" value={step.inputPlaceholder} placeholder="Placeholder" onChange={this.changeStepKey('inputPlaceholder', sIdx)} />
+            <input className="form-control" value={step.inputPlaceholder} placeholder="Short answer placeholder" onChange={this.changeStepKey('inputPlaceholder', sIdx)} />
             )}
           {step.type === 'long' && (
-          <textarea className="form-control" value={step.inputPlaceholder} placeholder="Placeholder" onChange={this.changeStepKey('inputPlaceholder', sIdx)} />
+          <textarea className="form-control" value={step.inputPlaceholder} placeholder="Long answer placeholder" onChange={this.changeStepKey('inputPlaceholder', sIdx)} />
             )}
         </div>
 
