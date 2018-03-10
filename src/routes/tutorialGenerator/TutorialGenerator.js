@@ -14,6 +14,7 @@ import faLink from '@fortawesome/fontawesome-free-solid/faLink'
 import faCog from '@fortawesome/fontawesome-free-solid/faCog'
 import faExternalLinkAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkAlt'
 import faEye from '@fortawesome/fontawesome-free-solid/faEye'
+import TextareaAutosize from 'react-autosize-textarea'
 
 import { inputChange, inputToggle } from '../../forms'
 import { reorder, scrollToElem } from '../../utils'
@@ -106,7 +107,7 @@ class TutorialGenerator extends React.Component {
   renderTOC() {
     const stepsCount = this.state.steps.length - 1
     return (
-      <div>
+      <div style={{ maxHeight: '90vh', overflowY: 'scroll' }}>
         <h2>TOC</h2>
         <a onClick={() => scrollToElem(document.querySelector('html'), 0, 300)}>Details</a>
         <DragDropContext onDragEnd={this.onDragEnd}>
@@ -150,8 +151,8 @@ class TutorialGenerator extends React.Component {
       <div key={sIdx} id={`step-${sIdx}`}>
         <div className="row">
           <div className="col-10">
-            <input style={{ width: '100%', border: 0 }} className="h2" id={`step-${sIdx}-title`} placeholder="Step title" value={step.title} onChange={this.changeStepKey('title', sIdx)} />
-            <textarea style={{ minHeight: 200, width: '100%', border: 0 }} id={`step-${sIdx}-description`} required className="form-control" placeholder="Step description" value={step.description} onChange={this.changeStepKey('description', sIdx)} />
+            <input style={{ width: '100%', border: 0 }} className="h2" placeholder="Step title" value={step.title} onChange={this.changeStepKey('title', sIdx)} />
+            <TextareaAutosize style={{ width: '100%', border: 0 }} required className="form-control" placeholder="Step description" value={step.description} onChange={this.changeStepKey('description', sIdx)} />
           </div>
           <div className="col-2">
             <p className="text-right">{sIdx}/{this.state.steps.length - 1} <a onClick={this.removeStep(sIdx)}><FontAwesomeIcon icon={faTrashAlt} /></a></p>
