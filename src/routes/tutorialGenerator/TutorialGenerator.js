@@ -15,6 +15,7 @@ import faCog from '@fortawesome/fontawesome-free-solid/faCog'
 import faExternalLinkAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkAlt'
 import faEye from '@fortawesome/fontawesome-free-solid/faEye'
 import TextareaAutosize from 'react-autosize-textarea'
+import { Typeahead } from 'react-bootstrap-typeahead'
 
 import { inputChange, inputToggle } from '../../forms'
 import { reorder, scrollToElem } from '../../utils'
@@ -35,20 +36,13 @@ class TutorialGenerator extends React.Component {
     nick: '',
     credits: '',
     steps: [stepInitialState()],
+    hiddenFields: [],
   }
 
   componentWillMount() {
     if (this.props.data) {
       this.setState(this.props.data)
     }
-  }
-
-  componentDidMount() {
-    window.addEventListener('keydown', this.onKeyDown)
-  }
-
-  componentWillUnmount() {
-    window.addEventListener('keydown', this.onKeyDown)
   }
 
   render() {
@@ -59,7 +53,7 @@ class TutorialGenerator extends React.Component {
           <hr />
           <h1 id="steps" className="text-center">Steps</h1>
           {this.renderSteps()}
-          <a onClick={this.addStep}>+ Step</a>
+          <a onClick={this.addStepAtEnd}>+ Step</a>
           <div className={s.controls}>
             <a className={s.control} href={`/tools/${this.props.url}`} target="_blank"><FontAwesomeIcon icon={faEye} /></a>
             <a className={s.control} onClick={this.save}><FontAwesomeIcon icon={faSave} /></a>
@@ -100,6 +94,15 @@ class TutorialGenerator extends React.Component {
           <input style={{ marginRight: 10 }} type="checkbox" id="isDraft" value={isDraft} checked={isDraft} onChange={inputToggle.call(this, 'isDraft')} />
           <label htmlFor="isDraft">Draft</label>
         </div>
+        <Typeahead
+          allowNew
+          multiple
+          newSelectionPrefix="Add hidden field:"
+          onChange={this.updateHiddenFields}
+          defaultSelected={this.state.hiddenFields}
+          options={this.state.hiddenFields}
+          placeholder="Add hidden field"
+        />
       </div>
     )
   }
@@ -170,18 +173,18 @@ class TutorialGenerator extends React.Component {
             </select>
           </div>
         </div>
+        {step.type === 'short' && (
         <div className="form-group">
-          {step.type === 'short' && (
-            <input className="form-control" value={step.inputPlaceholder} placeholder="Short answer placeholder" onChange={this.changeStepKey('inputPlaceholder', sIdx)} />
-            )}
-          {step.type === 'long' && (
+          <input className="form-control" value={step.inputPlaceholder} placeholder="Short answer placeholder" onChange={this.changeStepKey('inputPlaceholder', sIdx)} />
+        </div>)}
+        {step.type === 'long' && (
+        <div className="form-group">
           <textarea className="form-control" value={step.inputPlaceholder} placeholder="Long answer placeholder" onChange={this.changeStepKey('inputPlaceholder', sIdx)} />
-            )}
-        </div>
+        </div>)}
 
         {this.renderMultipleAnswers(sIdx)}
-
-        <hr style={{ borderTopWidth: 10, marginBottom: 40 }} />
+        <a onClick={() => this.addStep(sIdx)} className="pull-right">+ Step</a>
+        <hr style={{ borderTopWidth: 10, marginBottom: 40, clear: 'both' }} />
       </div>
     ),
     )
@@ -272,12 +275,21 @@ class TutorialGenerator extends React.Component {
   }
 
   removeStep = sIdx => () => {
+    if (!global.confirm(`really delete step ${this.state.steps.title}?`)) {
+      return
+    }
     const nextSteps = [...this.state.steps]
     nextSteps.splice(sIdx, 1)
     this.setState({ steps: nextSteps })
   }
 
-  addStep = () => {
+  addStep = (sIdx) => {
+    const nextSteps = [...this.state.steps]
+    nextSteps.splice(sIdx + 1, 0, stepInitialState())
+    this.setState({ steps: nextSteps })
+  }
+
+  addStepAtEnd = () => {
     const nextSteps = [...this.state.steps]
     nextSteps.push(stepInitialState())
     this.setState({ steps: nextSteps })
@@ -365,13 +377,10 @@ class TutorialGenerator extends React.Component {
         global.alert(err.message)
       })
   }
-  onKeyDown = () => {
-    // if (evt.srcElement.getAttribute('data-answer')) {
-    //   this.addAnswerToStep(evt.srcElement)
-    //   return
-    // }
-    // console.log(evt)
-    // console.log(evt.key)
+
+  updateHiddenFields = (hiddenFields) => {
+    // TODO :: if an existing field is changed or removed, check if it's used, and prompt warning
+    this.setState({ hiddenFields })
   }
 }
 

@@ -67,6 +67,7 @@
     "react": "^16.0.0",
     "react-autosize-textarea": "^3.0.2",
     "react-beautiful-dnd": "^4.0.1",
+    "react-bootstrap-typeahead": "^2.5.1",
     "react-click-outside": "tj/react-click-outside",
     "react-collapsible": "^2.0.3",
     "react-dom": "^16.0.0",
