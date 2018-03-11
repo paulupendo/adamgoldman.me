@@ -67,6 +67,17 @@ class TutorialGenerator extends React.Component {
     )
   }
 
+  promptVariable = (evt) => {
+    if (evt.key !== '@') {
+      return
+    }
+    // todo ::  http://jsfiddle.net/dandv/aFPA7/
+    this.setState({
+      inputLeft: this.widthMeasureElem.offsetWidth,
+      inputTop: 0,
+    })
+  }
+
   renderDetails() {
     const {
       title, nick, description, credits, isDraft,
@@ -84,7 +95,22 @@ class TutorialGenerator extends React.Component {
         </div>
         <div className="form-group">
           Description
-          <input className="form-control" placeholder="Description" value={description} onChange={inputChange.call(this, 'description')} />
+          <div style={{ position: 'relative' }}>
+            <input onKeyPress={this.promptVariable} className="form-control" placeholder="Description" value={description} onChange={inputChange.call(this, 'description')} />
+            <div ref={(el) => { this.widthMeasureElem = el }} className="form-control" style={{ color: 'blue', display: 'inline-block', width: 'auto' }}>{description}</div>
+            <div
+              ref={(el) => { this.variableFiller = el }}
+              style={{
+                left: this.state.inputLeft,
+                top: this.state.inputTop,
+                position: 'absolute',
+                padding: '.375rem 0',
+                fontSize: '1rem',
+                lineHeight: 1.5,
+              }}
+            >name
+            </div>
+          </div>
         </div>
         <div className="form-group">
           Credits
@@ -133,7 +159,7 @@ class TutorialGenerator extends React.Component {
                           )}
                           {...providedInner.dragHandleProps}
                         >
-                          <a onClick={() => scrollToElem(document.querySelector('html'), document.querySelector(`#step-${sIdx}`).getBoundingClientRect().top - document.body.getBoundingClientRect().top, 300)}>Step {(sIdx <= 9 && stepsCount > 9) ? `0${sIdx}` : sIdx}/{stepsCount}</a> - {title}
+                          <a onClick={() => scrollToElem(document.querySelector('html'), document.querySelector(`#step-${sIdx}`).getBoundingClientRect().top - document.body.getBoundingClientRect().top, 300)}>{(sIdx <= 9 && stepsCount > 9) ? `0${sIdx}` : sIdx}/{stepsCount}</a> - {title}
                         </div>
                         {providedInner.placeholder}
                       </div>
@@ -184,7 +210,10 @@ class TutorialGenerator extends React.Component {
 
         {this.renderMultipleAnswers(sIdx)}
         <a onClick={() => this.addStep(sIdx)} className="pull-right">+ Step</a>
-        <hr style={{ borderTopWidth: 10, marginBottom: 40, clear: 'both' }} />
+        <hr style={{
+ borderTopWidth: 1, marginBottom: 10, marginTop: 10, clear: 'both',
+}}
+        />
       </div>
     ),
     )
@@ -234,6 +263,14 @@ class TutorialGenerator extends React.Component {
             <div className="form-group">
               { a.isSetInput && <input placeholder="Input id" value={a.inputId} onChange={this.changeAnswerKey('inputId', sIdx, aIdx)} /> }
               { a.isSetInput && <input placeholder="Input value" value={a.inputValue} onChange={this.changeAnswerKey('inputValue', sIdx, aIdx)} /> }
+
+              { a.isSetInput && (
+                <label htmlFor={`step-${sIdx}-answer-${aIdx}-test`} className="form-check-label">
+                  <input type="radio" className="form-check-input" id={`step-${sIdx}-answer-${aIdx}-test`} onChange={() => console.log('unselect all the others')} />
+                  Set for test
+                </label>
+              )
+              }
             </div>
             <div className="form-group">
               { a.hasGoToStep && <input placeholder="title" value={a.goToStepByTitle} onChange={this.changeAnswerKey('goToStepByTitle', sIdx, aIdx)} /> }
