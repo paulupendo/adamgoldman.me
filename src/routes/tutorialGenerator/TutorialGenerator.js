@@ -17,6 +17,7 @@ import faEye from '@fortawesome/fontawesome-free-solid/faEye'
 import TextareaAutosize from 'react-autosize-textarea'
 import { Typeahead } from 'react-bootstrap-typeahead'
 
+import InputTrigger from '../../components/InputTrigger'
 import { inputChange, inputToggle } from '../../forms'
 import { reorder, scrollToElem } from '../../utils'
 
@@ -180,7 +181,15 @@ class TutorialGenerator extends React.Component {
       <div key={sIdx} id={`step-${sIdx}`}>
         <div className="row">
           <div className="col-10">
-            <input style={{ width: '100%', border: 0 }} className="h2" placeholder="Step title" value={step.title} onChange={this.changeStepKey('title', sIdx)} />
+            <InputTrigger
+              trigger={{
+    keyCode: 50,
+    shiftKey: true,
+  }}
+              onStart={(obj) => { console.log(obj) }}
+            >
+              <input style={{ width: '100%', border: 0 }} className="h2" placeholder="Step title" value={step.title} onChange={this.changeStepKey('title', sIdx)} />
+            </InputTrigger>
             <TextareaAutosize style={{ width: '100%', border: 0 }} required className="form-control" placeholder="Step description" value={step.description} onChange={this.changeStepKey('description', sIdx)} />
           </div>
           <div className="col-2">
