@@ -14,10 +14,9 @@ import faLink from '@fortawesome/fontawesome-free-solid/faLink'
 import faCog from '@fortawesome/fontawesome-free-solid/faCog'
 import faExternalLinkAlt from '@fortawesome/fontawesome-free-solid/faExternalLinkAlt'
 import faEye from '@fortawesome/fontawesome-free-solid/faEye'
-import TextareaAutosize from 'react-autosize-textarea'
 import { Typeahead } from 'react-bootstrap-typeahead'
 
-import InputTrigger from '../../components/InputTrigger'
+import MentionVariableTools from '../../components/MentionVariableTools'
 import { inputChange, inputToggle } from '../../forms'
 import { reorder, scrollToElem } from '../../utils'
 
@@ -38,6 +37,11 @@ class TutorialGenerator extends React.Component {
     credits: '',
     steps: [stepInitialState()],
     hiddenFields: [],
+    fields: [
+      'name',
+      'him_her',
+      'his_her',
+    ],
   }
 
   componentWillMount() {
@@ -181,16 +185,25 @@ class TutorialGenerator extends React.Component {
       <div key={sIdx} id={`step-${sIdx}`}>
         <div className="row">
           <div className="col-10">
-            <InputTrigger
-              trigger={{
-    keyCode: 50,
-    shiftKey: true,
-  }}
-              onStart={(obj) => { console.log(obj) }}
-            >
-              <input style={{ width: '100%', border: 0 }} className="h2" placeholder="Step title" value={step.title} onChange={this.changeStepKey('title', sIdx)} />
-            </InputTrigger>
-            <TextareaAutosize style={{ width: '100%', border: 0 }} required className="form-control" placeholder="Step description" value={step.description} onChange={this.changeStepKey('description', sIdx)} />
+            <MentionVariableTools
+              style={{ width: '100%', border: 0 }}
+              type="inputText"
+              inputData={this.state.users}
+              value={e => global.console.log(e)}
+              placeHolder="Step title"
+              data={this.state.hiddenFields}
+              onChange={this.changeStepKey('title', sIdx)}
+              required
+            />
+            <MentionVariableTools
+              style={{ width: '100%', border: 0 }}
+              className="form-control"
+              value={e => global.console.log(e)}
+              placeholder="Step description"
+              onChange={this.changeStepKey('description', sIdx)}
+              data={this.state.hiddenFields}
+              required
+            />
           </div>
           <div className="col-2">
             <p className="text-right">{sIdx}/{this.state.steps.length - 1} <a onClick={this.removeStep(sIdx)}><FontAwesomeIcon icon={faTrashAlt} /></a></p>
@@ -220,8 +233,8 @@ class TutorialGenerator extends React.Component {
         {this.renderMultipleAnswers(sIdx)}
         <a onClick={() => this.addStep(sIdx)} className="pull-right">+ Step</a>
         <hr style={{
- borderTopWidth: 1, marginBottom: 10, marginTop: 10, clear: 'both',
-}}
+         borderTopWidth: 1, marginBottom: 10, marginTop: 10, clear: 'both',
+        }}
         />
       </div>
     ),
@@ -275,7 +288,7 @@ class TutorialGenerator extends React.Component {
 
               { a.isSetInput && (
                 <label htmlFor={`step-${sIdx}-answer-${aIdx}-test`} className="form-check-label">
-                  <input type="radio" className="form-check-input" id={`step-${sIdx}-answer-${aIdx}-test`} onChange={() => console.log('unselect all the others')} />
+                  <input type="radio" className="form-check-input" id={`step-${sIdx}-answer-${aIdx}-test`} onChange={() => global.console.log('unselect all the others')} />
                   Set for test
                 </label>
               )
